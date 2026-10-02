@@ -1,0 +1,107 @@
+app-id: com.jadebrowser.Jade
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+base: org.chromium.Chromium.BaseApp
+base-version: '25.08'
+command: jade
+separate-locales: false
+tags:
+  - proprietary
+build-options:
+  no-debuginfo: true
+finish-args:
+  - --require-version=1.8.2
+  - --device=all # Passkeys for webcams and USB security keys
+  - --share=ipc
+  - --share=network
+  - --socket=cups # Printing
+  - --socket=pcsc # Webauthn / FIDO2
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --socket=fallback-x11 # X11 only where there is no Wayland session
+  - --allow=bluetooth # FIDO2 CTAP hybrid transport (passkeys on a phone)
+  - --system-talk-name=org.bluez
+  - --system-talk-name=org.freedesktop.Avahi
+  - --system-talk-name=org.freedesktop.UPower
+  - --talk-name=com.canonical.AppMenu.Registrar
+  - --talk-name=org.freedesktop.FileManager1
+  - --talk-name=org.freedesktop.Notifications
+  - --talk-name=org.freedesktop.ScreenSaver
+  - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.gnome.SessionManager
+  - --talk-name=org.kde.kwalletd5 # Used for password encryption under KDE5 environments
+  - --talk-name=org.kde.kwalletd6 # Used for password encryption under KDE6 environments
+  - --talk-name=org.kde.StatusNotifierWatcher # Tray icon for background apps
+  - --own-name=org.mpris.MediaPlayer2.chromium.* # The binary registers chromium.instance<pid>
+  - --filesystem=/run/.heim_org.h5l.kcm-socket # Kerberos
+  - --filesystem=xdg-run/pipewire-0 # Screen sharing
+  - --filesystem=xdg-desktop # Allow installing shortcuts on the desktop
+  - --filesystem=xdg-download # Default download directory
+  - --persist=.pki # Imported CA certificates
+  # For KDE proxy resolution (KDE5 only)
+  - --filesystem=~/.config/kioslaverc
+modules:
+  - name: zypak
+    sources:
+      - type: git
+        url: https://github.com/refi64/zypak
+        tag: v2025.09
+        commit: 693a71c5ffa80ec9c9ce2ae03b1ccc493c698e53
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
+
+  - name: jade
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/jade
+      - bsdtar xf jade.deb
+      - bsdtar -C /app/jade --strip-components 4 -xf data.tar.xz ./opt/jadebrowser/jade
+      # jade-browser.desktop, NOT the .deb's com.jadebrowser.Jade.desktop: that copy carries
+      # NoDisplay=true (it exists only for the portal's naming rules) and would hide Jade
+      # from every application menu.
+      - bsdtar -C /app/jade --strip-components 4 -xf data.tar.xz ./usr/share/applications/jade-browser.desktop
+      - rm -rf /app/jade/chrome-management-service /app/jade/cron /app/jade/apparmor.d /app/jade/jade-browser /app/jade/default-app-block
+      # The setuid sandbox helper will not work in a Flatpak; zypak supplies the sandbox.
+      - install -Dm 755 stub_sandbox.sh /app/jade/chrome-sandbox
+      # The .deb's desktop file, with its 98 translations, pointed at the Flatpak.  It also
+      # registers x-scheme-handler/chromium, which is Chromium's, not ours.
+      - sed -i 's,^Exec=/usr/bin/jade-browser-stable,Exec=jade,;s,^Icon=jade-browser,Icon=com.jadebrowser.Jade,;s,^StartupWMClass=jade-browser-stable,StartupWMClass=com.jadebrowser.Jade,;s,x-scheme-handler/chromium;,,'
+        /app/jade/jade-browser.desktop
+      - install -Dm 644 /app/jade/jade-browser.desktop /app/share/applications/com.jadebrowser.Jade.desktop
+      - rm /app/jade/jade-browser.desktop
+      - install -Dm 755 jade.sh /app/bin/jade
+      - install -Dm 644 -t /app/etc cobalt.ini
+      - install -Dm 644 -t /app/share/metainfo com.jadebrowser.Jade.metainfo.xml
+      - install -Dm 644 LICENSE.chromium /app/share/licenses/com.jadebrowser.Jade/LICENSE.chromium
+      - |
+        for size in 16 24 32 48 64 128 256; do
+          install -Dm 644 /app/jade/product_logo_${size}.png /app/share/icons/hicolor/${size}x${size}/apps/com.jadebrowser.Jade.png
+        done
+    sources:
+      - type: file
+        url: https://www.turbobrowser.co.uk/linux/apt/pool/main/jade-browser-stable_150.0.7871.128-2_amd64.deb
+        sha256: 5402652474bce9fd9f626e2e981877aa44ca4b4ff39e5779d9fa8cca56913171
+        dest-filename: jade.deb
+        only-arches: [x86_64]
+        x-checker-data:
+          type: debian-repo
+          root: https://www.turbobrowser.co.uk/linux/apt
+          dist: stable
+          component: main
+          package-name: jade-browser-stable
+          is-main-source: true
+      - type: script
+        dest-filename: stub_sandbox.sh
+        commands:
+          - 'echo "Stub sandbox ignoring command: $@" >&2'
+          - exit 1
+      - type: file
+        path: cobalt.ini
+      - type: file
+        path: com.jadebrowser.Jade.metainfo.xml
+      - type: file
+        path: jade.sh
+      - type: file
+        path: LICENSE.chromium

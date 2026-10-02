@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2017 the Chromium authors, with modifications -->
+<component type="desktop-application">
+  <id>com.jadebrowser.Jade</id>
+  <launchable type="desktop-id">com.jadebrowser.Jade.desktop</launchable>
+  <name>Jade Browser</name>
+  <developer id="com.jadebrowser">
+    <name>Jade Browser Limited</name>
+  </developer>
+  <summary>A faster, more private web browser</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <url type="homepage">https://www.jadebrowser.com/</url>
+  <url type="contact">https://www.jadebrowser.com/jade/html/new_contact</url>
+  <keywords>
+    <keyword>web browser</keyword>
+    <keyword>ad blocker</keyword>
+    <keyword>privacy browser</keyword>
+    <keyword>dark mode</keyword>
+    <keyword>vpn</keyword>
+  </keywords>
+  <description>
+    <p>
+      Jade is a web browser built on Chromium that focuses on speed, privacy and a clean
+      reading experience.
+    </p>
+    <p>Out of the box, Jade:</p>
+    <ul>
+      <li>Blocks ads</li>
+      <li>Shows web pages in dark mode</li>
+      <li>Turns on Turbo, which makes pages load faster and use less data</li>
+    </ul>
+    <p>
+      Turbo works by fetching some of the images, scripts and stylesheets on the pages you visit
+      through Jade's servers, which compress them before they reach you. It can be turned off in
+      Jade's options.
+    </p>
+    <p>
+      Ad blocking uses block lists that Jade downloads from its servers. An optional VPN, off
+      until you turn it on, routes your browsing through Jade's VPN servers. Its UK location is
+      free; the US and Switzerland locations need a paid subscription. A reader mode is also
+      available.
+    </p>
+    <p>
+      Jade includes the Clerkenwell Coupons extension, which finds and applies discount codes at
+      checkout. A list of the stores it covers is kept on your device and updated daily, and it
+      asks the Clerkenwell Coupons service for codes only on the basket or checkout pages of those
+      stores. When a page shows which shop software it runs on, or that it is behind a
+      bot-protection service, the extension also reports the site's address, that software or
+      service, its basket link and your browser version, to build its directory of stores. You can
+      remove the extension from the Extensions page.
+    </p>
+  </description>
+  <branding>
+    <color type="primary" scheme_preference="light">#dcfce7</color>
+    <color type="primary" scheme_preference="dark">#1e293b</color>
+  </branding>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.jadebrowser.com/jade/flathub/jade-welcome.png</image>
+      <caption>The welcome page, with ad blocking and data savings on from the start</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.jadebrowser.com/jade/flathub/jade-options.png</image>
+      <caption>Turn the ad blocker, VPN and data optimiser on or off</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.jadebrowser.com/jade/flathub/jade-dark-mode.png</image>
+      <caption>A Wikipedia article in Jade's dark mode</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.jadebrowser.com/jade/flathub/jade-reader-mode.png</image>
+      <caption>The same article in reader mode</caption>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="150.0.7871.128-2" date="2026-10-01"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+  <update_contact>support@jadebrowser.com</update_contact>
+</component>
